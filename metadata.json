@@ -1,0 +1,5 @@
+{
+  "name": "Seven-Go: 7x7 Weiqi Platform",
+  "description": "A professional 7x7 Go (Weiqi) application featuring human-vs-AI modes, practice and competition settings, real-time scoring, and AI game analysis powered by Gemini.",
+  "requestFramePermissions": []
+}
