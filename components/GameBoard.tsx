@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Color } from '../types';
-// Fix: Import BOARD_SIZE from constants instead of types
 import { BOARD_SIZE } from '../constants';
 
 interface GameBoardProps {
@@ -11,6 +10,7 @@ interface GameBoardProps {
   isScoringMode: boolean;
   deadStones: boolean[][];
   onToggleDeadStone: (x: number, y: number) => void;
+  highlightCoords?: { x: number; y: number }[];
 }
 
 export const GameBoard: React.FC<GameBoardProps> = ({ 
@@ -19,11 +19,15 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   onPlaceStone, 
   isScoringMode,
   deadStones,
-  onToggleDeadStone
+  onToggleDeadStone,
+  highlightCoords = []
 }) => {
   const cellSize = 50;
   const padding = 25;
   const totalSize = (BOARD_SIZE - 1) * cellSize + padding * 2;
+
+  const isHighlighted = (x: number, y: number) => 
+    highlightCoords.some(c => c.x === x && c.y === y);
 
   return (
     <div className="relative inline-block wood-texture p-4 rounded-lg shadow-2xl border-4 border-amber-800">
@@ -48,7 +52,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           ))}
         </g>
 
-        {/* Star Points (optional for 7x7 but nice) */}
+        {/* Star Points */}
         <circle cx={padding + 3 * cellSize} cy={padding + 3 * cellSize} r="3" fill="#333" />
 
         {/* Interaction Layer */}
@@ -65,14 +69,29 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             
             {stone && (
               <g>
+                {/* Situation Analysis Highlight Effect */}
+                {isHighlighted(x, y) && (
+                  <circle 
+                    cx={padding + x * cellSize} 
+                    cy={padding + y * cellSize} 
+                    r={cellSize * 0.55} 
+                    fill="none"
+                    stroke={stone === 'black' ? '#ef4444' : '#f59e0b'}
+                    strokeWidth="2"
+                    strokeDasharray="4,2"
+                    className="animate-[spin_10s_linear_infinite]"
+                  />
+                )}
+
                 <circle 
                   cx={padding + x * cellSize} 
                   cy={padding + y * cellSize} 
                   r={cellSize * 0.45} 
                   fill={stone === 'black' ? '#111' : '#fff'}
                   stroke={stone === 'black' ? '#000' : '#ccc'}
-                  className={deadStones[y][x] ? "opacity-40" : ""}
+                  className={deadStones[y][x] ? "opacity-40" : "drop-shadow-sm"}
                 />
+                
                 {/* Last move marker */}
                 {!isScoringMode && lastMove?.x === x && lastMove?.y === y && (
                   <circle 
@@ -82,6 +101,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                     fill={stone === 'black' ? '#fff' : '#000'} 
                   />
                 )}
+
                 {/* Scoring marker for dead stones */}
                 {isScoringMode && deadStones[y][x] && (
                   <rect 

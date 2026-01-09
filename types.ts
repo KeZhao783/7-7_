@@ -24,3 +24,16 @@ export interface GameTimer {
   player: number;
   move: number;
 }
+
+export interface AnalysisInsight {
+  type: 'danger' | 'warning' | 'info' | 'opportunity';
+  text: string;
+  coords?: { x: number; y: number }[];
+}
+
+export interface SituationAnalysis {
+  summary: string;
+  insights: AnalysisInsight[];
+  blackPotential: number;
+  whitePotential: number;
+}
